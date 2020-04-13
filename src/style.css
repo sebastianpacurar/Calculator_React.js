@@ -27,6 +27,7 @@
     background-color: black;
     color: white;
     border: 5px solid black;
+    user-select: none;
 }
 
 .bottom-row {
@@ -60,6 +61,11 @@ button {
     text-align: center;
     display: inline-block;
     font-size: 16px;
+}
+
+.rad-dag-button {
+    width: 150px;
+    background-color: yellow;
 }
 
 button:active {

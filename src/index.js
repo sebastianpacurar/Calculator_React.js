@@ -12,7 +12,6 @@ const CalculatorTitle = (props) => {
     )
 };
 
-
 // The Input Component
 class Input extends React.Component {
     render() {
@@ -49,7 +48,6 @@ class Delete extends React.Component {
     }
 }
 
-
 // The Output Component
 class Output extends React.Component {
     render() {
@@ -61,11 +59,10 @@ class Output extends React.Component {
     }
 }
 
-
 // The button Component
 class Button extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
     }
 
     // if it is a number or a decimal or an equal sign return true, if it is not a number return false,
@@ -85,17 +82,37 @@ class Button extends React.Component {
     }
 }
 
+// The Radian Degree Component
+class DegRadButton extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return (
+            <button className={"rad-dag-button"}
+
+                // the method which will grab the children (button numbers/operators) upon click
+                    onClick={() => {
+                        this.props.handleClick(this.props.children)
+                    }}>{this.props.children}
+            </button>
+        );
+    }
+}
+
 
 // the actual App Component
 class Calculator extends React.Component {
     constructor(props) {
         super(props);
 
-        // 3 states: one for input, one for output, and one for number
+        // 4 states: one for input, one for output, one for number and one for radians or degrees
         this.state = {
-            input: "",  // the input state
-            output: "", // the output state
-            number: ""  // the number state for complex calculations
+            input: "",       // the input state
+            output: "",      // the output state
+            number: "",      // the number state for complex calculations
+            degree: false    // the state used to calculate trigonometric functions
         };
     }
 
@@ -104,6 +121,10 @@ class Calculator extends React.Component {
         return this.state.input[this.state.input.length - 1];
     }
 
+    // set the state to true if pressed button is "Radians"
+    isDegreeOn = val => {
+        this.setState({degree: val === "Degrees"});
+    }
 
     // add value to input
     addNumber = val => {
@@ -133,7 +154,6 @@ class Calculator extends React.Component {
             }
         }
     };
-
 
     // add simple operators
     addOperator = val => {
@@ -187,7 +207,6 @@ class Calculator extends React.Component {
         }
     }
 
-
     // clear input value and number states
     clear = () => {
         this.setState({
@@ -205,7 +224,6 @@ class Calculator extends React.Component {
         });
     }
 
-
     // the function used when clicking "=" sign
     calculate = () => {
 
@@ -220,32 +238,44 @@ class Calculator extends React.Component {
 
                 // calculate sine
                 if (result.includes("sin")) {
+                    const inputNumber = eval(this.state.number);
+
+                    // if degrees is true, calculate sine in degrees
                     this.setState({
-                        output: Math.sin(eval(this.state.number)),
+                        output: this.state.degree ? Math.sin(inputNumber * Math.PI / 180) : Math.sin(inputNumber),
                         number: ""
                     });
                 }
 
                 // calculate cosine
                 else if (result.includes("cos")) {
+                    const inputNumber = eval(this.state.number);
+
+                    // if degrees is true, calculate cosine in degrees
                     this.setState({
-                        output: Math.cos(eval(this.state.number)),
+                        output: this.state.degree ? Math.cos(inputNumber * Math.PI / 180) : Math.cos(inputNumber),
                         number: ""
                     });
                 }
 
                 // calculate tan
                 else if (result.includes("tan")) {
+                    const inputNumber = eval(this.state.number);
+
+                    // if degrees is true, calculate tangent in degrees
                     this.setState({
-                        output: Math.tan(eval(this.state.number)),
+                        output: this.state.degree ? Math.tan(inputNumber * Math.PI / 180) : Math.tan(inputNumber),
                         number: ""
                     });
                 }
 
                 // calculate cot
                 else if (result.includes("cot")) {
+                    const inputNumber = eval(this.state.number);
+
+                    // if degrees is true, calculate cotangent in degrees
                     this.setState({
-                        output: 1 / Math.tan(eval(this.state.number)),
+                        output: this.state.degree ? 1 / Math.tan(inputNumber * Math.PI / 180) : 1 / Math.tan(inputNumber),
                         number: ""
                     });
                 }
@@ -272,6 +302,10 @@ class Calculator extends React.Component {
                     <CalculatorTitle value={"Simple Calculator"}/>
                     <Input>{this.state.input}</Input>
                     <Output>{this.state.output}</Output>
+                    <div className={"button-row"}>
+                        <DegRadButton handleClick={this.isDegreeOn}>Radians</DegRadButton>
+                        <DegRadButton handleClick={this.isDegreeOn}>Degrees</DegRadButton>
+                    </div>
                     <div className={"button-row"}>
                         <Button handleClick={this.addNumber}>1</Button>
                         <Button handleClick={this.addNumber}>2</Button>
