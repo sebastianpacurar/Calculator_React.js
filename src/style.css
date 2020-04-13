@@ -29,6 +29,23 @@
     border: 5px solid black;
 }
 
+.bottom-row {
+    height: 30px;
+    width: 300px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 20px;
+    background-color: grey;
+    color: black;
+    user-select: none;
+    border-top: 1px solid black;
+}
+
+.bottom-row:active {
+    background-color: orange;
+    color: antiquewhite;
+}
+
 .operator {
     background-color: orange;
     color: black;

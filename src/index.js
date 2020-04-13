@@ -24,6 +24,31 @@ class Input extends React.Component {
     }
 }
 
+class Clear extends React.Component {
+    render() {
+        return (
+            <div className={"bottom-row"}
+
+                // the method which will grab the children (the div content) upon click
+                 onClick={() => this.props.handleClick(this.props.children)}>{this.props.children}
+            </div>
+        )
+
+    }
+}
+
+class Delete extends React.Component {
+    render() {
+        return (
+            <div className={"bottom-row"}
+
+                // the method which will grab the children (the div content) upon click
+                 onClick={() => this.props.handleClick(this.props.children)}>{this.props.children}
+            </div>
+        )
+    }
+}
+
 
 // The Output Component
 class Output extends React.Component {
@@ -66,10 +91,11 @@ class Calculator extends React.Component {
     constructor(props) {
         super(props);
 
-        // 2 states: one for input, and one for output
+        // 3 states: one for input, one for output, and one for number
         this.state = {
             input: "",  // the input state
             output: "", // the output state
+            number: ""  // the number state for complex calculations
         };
     }
 
@@ -82,10 +108,30 @@ class Calculator extends React.Component {
     // add value to input
     addNumber = val => {
 
-        // append the number to input
-        this.setState({
-            input: this.state.input + val
-        });
+        // if input ends with ")" do not add number
+        if (!this.state.input.endsWith(")")) {
+            // append the number to input
+            this.setState({
+                input: this.state.input + val,
+                number: this.state.number + val
+            });
+        }
+    };
+
+    // add zero to input
+    addZero = val => {
+
+        // if this.state.input is not empty then add zero
+        if (this.state.input !== "") {
+
+            // prevent from adding 0 if last element is not a number
+            if (!isNaN(Number(this.lastInputElement()))) {
+                this.setState({
+                    input: this.state.input + val,
+                    number: this.state.number + val
+                });
+            }
+        }
     };
 
 
@@ -97,53 +143,123 @@ class Calculator extends React.Component {
             this.setState({input: "-"});
         }
 
-        // prevent from adding any operator except "-" if input is empty
+        // prevent adding operator if last element is not a number
         else if (!isNaN(Number(this.lastInputElement()))) {
+            switch (val) {
+                case "sin(x)":
+                    // avoid calling sin multiple times on the same input
+                    if (!this.state.input.includes("sin")) {
+                        this.setState({input: `sin(${this.state.input})`});
+                    }
+                    break;
 
-            // append value to input
-            this.setState({
-                input: this.state.input + val
-            });
+                case "cos(x)":
+                    // avoid calling cos multiple times on the same input
+                    if (!this.state.input.includes("cos")) {
+                        this.setState({input: `cos(${this.state.input})`});
+                    }
+                    break;
+
+                case "tan(x)":
+                    // avoid calling tan multiple times on the same input
+                    if (!this.state.input.includes("tan")) {
+                        this.setState({input: `tan(${this.state.input})`});
+                    }
+                    break;
+
+                case "cot(x)":
+                    // avoid calling cot multiple times on the same input
+                    if (!this.state.input.includes("cot")) {
+                        this.setState({input: `cot(${this.state.input})`});
+                    }
+                    break;
+
+                // for simple operators
+                default:
+                    if (this.lastInputElement() !== val) {
+                        this.setState({
+                            input: this.state.input + val,
+                            number: this.state.number + val
+                        });
+                    }
+                    break;
+            }
         }
-    };
+    }
 
 
     // clear input value and number states
     clear = () => {
         this.setState({
             input: "",
-            output: "",
+            number: "",
         });
     };
+
+    // clear input, output and number states
+    delete = () => {
+        this.setState({
+            input: "",
+            output: "",
+            number: ""
+        });
+    }
 
 
     // the function used when clicking "=" sign
     calculate = () => {
 
-        // if last element is not a number do not calculate
-        if (!isNaN(Number(this.lastInputElement()))) {
+        // if input is empty, do nothing
+        if (this.state.input.length > 0) {
 
-            // if input is empty, do nothing
-            if (this.state.input.length > 0) {
+            // if last element is not a number or does not end with ")" do not calculate
+            if (!isNaN(Number(this.lastInputElement())) || this.state.input.endsWith(")")) {
 
-                // save the result of the evaluation in a variable
-                const result = eval(this.state.input);
+                let result = this.state.input;        // save the input state into result variable
+                this.setState({input: ""});     // reset the input state to empty string
 
-                // if the number is too large, instead of displaying Infinity, display message
-                // set the input back to blank for future calculations
-                if (result === Infinity) {
+                // calculate sine
+                if (result.includes("sin")) {
                     this.setState({
-                        output: "Number is too big",
-                        input: ""
+                        output: Math.sin(eval(this.state.number)),
+                        number: ""
                     });
                 }
 
-                // if number is not too large, display result and set the input back to blank
-                else {
+                // calculate cosine
+                else if (result.includes("cos")) {
                     this.setState({
-                        output: result,
-                        input: ""
+                        output: Math.cos(eval(this.state.number)),
+                        number: ""
                     });
+                }
+
+                // calculate tan
+                else if (result.includes("tan")) {
+                    this.setState({
+                        output: Math.tan(eval(this.state.number)),
+                        number: ""
+                    });
+                }
+
+                // calculate cot
+                else if (result.includes("cot")) {
+                    this.setState({
+                        output: 1 / Math.tan(eval(this.state.number)),
+                        number: ""
+                    });
+                }
+
+                // for all common operators such as addition, subtraction, multiplication division and exponential
+                else {
+                    result = eval(result);
+
+                    // if the number is too large, instead of displaying Infinity, display message
+                    if (result === Infinity) {
+                        this.setState({output: "Number is too big"});
+                    } else {
+                        this.setState({output: result})
+                    }
                 }
             }
         }
@@ -153,7 +269,7 @@ class Calculator extends React.Component {
         return (
             <div>
                 <div className={"mainCalc"}>
-                    <CalculatorTitle value={"Calculator"}/>
+                    <CalculatorTitle value={"Simple Calculator"}/>
                     <Input>{this.state.input}</Input>
                     <Output>{this.state.output}</Output>
                     <div className={"button-row"}>
@@ -175,10 +291,20 @@ class Calculator extends React.Component {
                         <Button handleClick={this.addOperator}>+</Button>
                     </div>
                     <div className={"button-row"}>
-                        <Button handleClick={this.clear}>Clear</Button>
                         <Button handleClick={this.calculate}>=</Button>
+                        <Button handleClick={this.addZero}>0</Button>
                         <Button handleClick={this.addOperator}>**</Button>
                         <Button handleClick={this.addOperator}>/</Button>
+                    </div>
+                    <div className={"button-row"}>
+                        <Button handleClick={this.addOperator}>sin(x)</Button>
+                        <Button handleClick={this.addOperator}>cos(x)</Button>
+                        <Button handleClick={this.addOperator}>tan(x)</Button>
+                        <Button handleClick={this.addOperator}>cot(x)</Button>
+                    </div>
+                    <div className={"bottom-row"}>
+                        <Clear handleClick={this.clear}>Clear</Clear>
+                        <Delete handleClick={this.delete}>Delete</Delete>
                     </div>
                 </div>
             </div>
