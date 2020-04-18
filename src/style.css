@@ -30,28 +30,6 @@
     user-select: none;
 }
 
-.bottom-row {
-    height: 30px;
-    width: 300px;
-    margin: 0 auto;
-    text-align: center;
-    font-size: 20px;
-    background-color: grey;
-    color: black;
-    user-select: none;
-    border-top: 1px solid black;
-}
-
-.bottom-row:active {
-    background-color: orange;
-    color: antiquewhite;
-}
-
-.operator {
-    background-color: orange;
-    color: black;
-}
-
 button {
     width: 75px;
     background: greenyellow;
@@ -61,11 +39,21 @@ button {
     text-align: center;
     display: inline-block;
     font-size: 16px;
+    user-select: none;
 }
 
-.rad-dag-button {
+.operator {
+    background-color: orange;
+    color: black;
+}
+
+.special-button {
     width: 150px;
     background-color: yellow;
+}
+
+button:disabled {
+    background-color: grey;
 }
 
 button:active {
