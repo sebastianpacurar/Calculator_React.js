@@ -4,7 +4,7 @@ import "./style.css";
 
 
 // The Title Component
-const CalculatorTitle = (props) => {
+const CalculatorTitle = props => {
     return (
         <div className="calculator-title">
             {props.value}
@@ -23,31 +23,6 @@ class Input extends React.Component {
     }
 }
 
-class Clear extends React.Component {
-    render() {
-        return (
-            <div className={"bottom-row"}
-
-                // the method which will grab the children (the div content) upon click
-                 onClick={() => this.props.handleClick(this.props.children)}>{this.props.children}
-            </div>
-        )
-
-    }
-}
-
-class Delete extends React.Component {
-    render() {
-        return (
-            <div className={"bottom-row"}
-
-                // the method which will grab the children (the div content) upon click
-                 onClick={() => this.props.handleClick(this.props.children)}>{this.props.children}
-            </div>
-        )
-    }
-}
-
 // The Output Component
 class Output extends React.Component {
     render() {
@@ -59,48 +34,24 @@ class Output extends React.Component {
     }
 }
 
-// The button Component
-class Button extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+// The Button Component
+const Button = (props) => {
 
-    // if it is a number or a decimal or an equal sign return true, if it is not a number return false,
-    // will use this boolean function to color the operator buttons differently than the numbers and equal aign
-    isOperator = val => {
-        return !isNaN(val) || val === "=";
-    };
+    // the props used:
+    // className for css coloring
+    // value is the actual value used for operations
+    // onClick is the click method
+    // disabled is used to disable/enable buttons (mainly used for radians and degrees)
+    const {className, value, onClick, label, disabled} = props;
 
-    render() {
-        return (
-            <button className={`button ? ${this.isOperator(this.props.children) || "operator"}`}
-
-                // the method which will grab the children (button numbers/operators) upon click
-                    onClick={() => this.props.handleClick(this.props.children)}>{this.props.children}
-            </button>
-        )
-    }
+    return (
+        <button className={className}
+                onClick={() => onClick(value)}
+                disabled={disabled}>
+            {label}
+        </button>
+    )
 }
-
-// The Radian Degree Component
-class DegRadButton extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return (
-            <button className={"rad-dag-button"}
-
-                // the method which will grab the children (button numbers/operators) upon click
-                    onClick={() => {
-                        this.props.handleClick(this.props.children)
-                    }}>{this.props.children}
-            </button>
-        );
-    }
-}
-
 
 // the actual App Component
 class Calculator extends React.Component {
@@ -121,7 +72,7 @@ class Calculator extends React.Component {
         return this.state.input[this.state.input.length - 1];
     }
 
-    // set the state to true if pressed button is "Radians"
+    // set the state to true if pressed button is "Radians". this will be also used to disable/enable the buttons
     isDegreeOn = val => {
         this.setState({degree: val === "Degrees"});
     }
@@ -298,47 +249,136 @@ class Calculator extends React.Component {
     render() {
         return (
             <div>
-                <div className={"mainCalc"}>
-                    <CalculatorTitle value={"Simple Calculator"}/>
+                <div className={'mainCalc'}>
+                    <CalculatorTitle value={'Scientific Calculator'}/>
                     <Input>{this.state.input}</Input>
                     <Output>{this.state.output}</Output>
-                    <div className={"button-row"}>
-                        <DegRadButton handleClick={this.isDegreeOn}>Radians</DegRadButton>
-                        <DegRadButton handleClick={this.isDegreeOn}>Degrees</DegRadButton>
+                    <div className={'button-row'}>
+                        <Button
+                            type={'button'}
+                            className={'special-button'}
+                            value={'Radians'}
+                            label={'Radians'}
+                            onClick={this.isDegreeOn}
+                            disabled={!this.state.degree}/>
+                        <Button
+                            type={'button'}
+                            className={'special-button'}
+                            value={'Degrees'}
+                            label={'Degrees'}
+                            onClick={this.isDegreeOn}
+                            disabled={this.state.degree}/>
                     </div>
                     <div className={"button-row"}>
-                        <Button handleClick={this.addNumber}>1</Button>
-                        <Button handleClick={this.addNumber}>2</Button>
-                        <Button handleClick={this.addNumber}>3</Button>
-                        <Button handleClick={this.addOperator}>*</Button>
+                        <Button
+                            value={1}
+                            label={1}
+                            onClick={this.addNumber}/>
+                        <Button
+                            value={2}
+                            label={2}
+                            onClick={this.addNumber}/>
+                        <Button
+                            value={3}
+                            label={3}
+                            onClick={this.addNumber}/>
+                        <Button
+                            className={'operator'}
+                            value={'*'}
+                            label={'*'}
+                            onClick={this.addOperator}/>
                     </div>
                     <div className={"button-row"}>
-                        <Button handleClick={this.addNumber}>4</Button>
-                        <Button handleClick={this.addNumber}>5</Button>
-                        <Button handleClick={this.addNumber}>6</Button>
-                        <Button handleClick={this.addOperator}>-</Button>
+                        <Button
+                            value={4}
+                            label={4}
+                            onClick={this.addNumber}/>
+                        <Button
+                            value={5}
+                            label={5}
+                            onClick={this.addNumber}/>
+                        <Button
+                            value={6}
+                            label={6}
+                            onClick={this.addNumber}/>
+                        <Button
+                            className={'operator'}
+                            value={'-'}
+                            label={'-'}
+                            onClick={this.addOperator}/>
                     </div>
                     <div className={"button-row"}>
-                        <Button handleClick={this.addNumber}>7</Button>
-                        <Button handleClick={this.addNumber}>8</Button>
-                        <Button handleClick={this.addNumber}>9</Button>
-                        <Button handleClick={this.addOperator}>+</Button>
+                        <Button
+                            value={7}
+                            label={7}
+                            onClick={this.addNumber}/>
+                        <Button
+                            value={8}
+                            label={8}
+                            onClick={this.addNumber}/>
+                        <Button
+                            value={9}
+                            label={9}
+                            onClick={this.addNumber}/>
+                        <Button
+                            className={'operator'}
+                            value={'+'}
+                            label={'+'}
+                            onClick={this.addOperator}/>
                     </div>
                     <div className={"button-row"}>
-                        <Button handleClick={this.calculate}>=</Button>
-                        <Button handleClick={this.addZero}>0</Button>
-                        <Button handleClick={this.addOperator}>**</Button>
-                        <Button handleClick={this.addOperator}>/</Button>
+                        <Button
+                            value={'='}
+                            label={'='}
+                            onClick={this.calculate}/>
+                        <Button
+                            value={0}
+                            label={0}
+                            onClick={this.addZero}/>
+                        <Button
+                            className={'operator'}
+                            value={'**'}
+                            label={'x^y'}
+                            onClick={this.addOperator}/>
+                        <Button
+                            className={'operator'}
+                            value={'/'}
+                            label={'/'}
+                            onClick={this.addOperator}/>
                     </div>
                     <div className={"button-row"}>
-                        <Button handleClick={this.addOperator}>sin(x)</Button>
-                        <Button handleClick={this.addOperator}>cos(x)</Button>
-                        <Button handleClick={this.addOperator}>tan(x)</Button>
-                        <Button handleClick={this.addOperator}>cot(x)</Button>
+                        <Button
+                            className={'operator'}
+                            value={'sin(x)'}
+                            label={'sin(x)'}
+                            onClick={this.addOperator}/>
+                        <Button
+                            className={'operator'}
+                            value={'cos(x)'}
+                            label={'cos(x)'}
+                            onClick={this.addOperator}/>
+                        <Button
+                            className={'operator'}
+                            value={'tan(x)'}
+                            label={'tan(x)'}
+                            onClick={this.addOperator}/>
+                        <Button
+                            className={'operator'}
+                            value={'cot(x)'}
+                            label={'cot(x)'}
+                            onClick={this.addOperator}/>
                     </div>
-                    <div className={"bottom-row"}>
-                        <Clear handleClick={this.clear}>Clear</Clear>
-                        <Delete handleClick={this.delete}>Delete</Delete>
+                    <div className={'button-row'}>
+                        <Button
+                            className={'special-button'}
+                            value={'Clear'}
+                            label={'Clear'}
+                            onClick={this.clear}/>
+                        <Button
+                            className={'special-button'}
+                            value={'Delete'}
+                            label={'Delete'}
+                            onClick={this.delete}/>
                     </div>
                 </div>
             </div>
